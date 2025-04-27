@@ -5,16 +5,17 @@ import GamesFilter from "@/components/games-filter"
 import { Game } from "@/types/game.types"
 
 interface GamesPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string
     ordering?: string
-  }
+  }>
 }
 
 export default async function GamesPage({ searchParams }: GamesPageProps) {
+  const resolvedSearchParams = await searchParams
   const params = {
-    page: searchParams?.page || "1",
-    ordering: searchParams?.ordering || "-rating",
+    page: resolvedSearchParams?.page || "1",
+    ordering: resolvedSearchParams?.ordering || "-rating",
   }
 
   const page = Number.parseInt(params.page, 10) || 1
