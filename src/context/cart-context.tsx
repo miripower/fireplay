@@ -93,8 +93,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
             } else {
                 setCartItems([])
             }
-        } catch (error: any) {
-            setError("Error loading cart: " + error.message)
+        } catch (error: unknown) {
+            setError("Error loading cart: " + (error instanceof Error ? error.message : "Unknown error"))
             console.error("Error loading cart:", error)
         } finally {
             setLoading(false)

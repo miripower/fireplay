@@ -48,9 +48,9 @@ export default function RegisterPage() {
             setLoading(true)
             await register(email, password, displayName)
             router.push("/")
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err)
-            if (err.code === "auth/email-already-in-use") {
+            if (err instanceof Error && "code" in err && (err as { code: string }).code === "auth/email-already-in-use") {
                 setError("Este email ya está en uso. Por favor, utiliza otro o inicia sesión.")
             } else {
                 setError("Error al crear la cuenta. Por favor, inténtalo de nuevo.")

@@ -1,4 +1,5 @@
 export interface Game {
+    docId: string
     id: number
     slug: string
     name: string

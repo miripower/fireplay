@@ -36,13 +36,13 @@ export default function LoginPage() {
             setLoading(true)
             await login(email, password)
             router.push("/")
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err)
-            setError(
-                err.code === "auth/invalid-credential"
-                    ? "Credenciales incorrectas. Por favor, verifica tu email y contraseña."
-                    : "Error al iniciar sesión. Por favor, inténtalo de nuevo.",
-            )
+            if (err instanceof Error && (err as { code?: string }).code === "auth/invalid-credential") {
+                setError("Credenciales incorrectas. Por favor, verifica tu email y contraseña.")
+            } else {
+                setError("Error al iniciar sesión. Por favor, inténtalo de nuevo.")
+            }
         } finally {
             setLoading(false)
         }

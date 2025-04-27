@@ -57,8 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 // Force refresh the user object
                 setUser({ ...userCredential.user })
             }
-        } catch (error: any) {
-            setError(error.message)
+        } catch (error: unknown) {
+            setError((error as Error).message)
             throw error
         }
     }
@@ -67,8 +67,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             setError(null)
             await signInWithEmailAndPassword(auth, email, password)
-        } catch (error: any) {
-            setError(error.message)
+        } catch (error: unknown) {
+            setError((error as Error).message)
             throw error
         }
     }
@@ -77,8 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             setError(null)
             await signOut(auth)
-        } catch (error: any) {
-            setError(error.message)
+        } catch (error: unknown) {
+            setError((error as Error).message)
             throw error
         }
     }

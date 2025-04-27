@@ -57,8 +57,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
             })
 
             setFavorites(favoritesData)
-        } catch (error: any) {
-            setError("Error loading favorites: " + error.message)
+        } catch (error: unknown) {
+            setError("Error loading favorites: " + (error instanceof Error ? error.message : "Unknown error"))
             console.error("Error loading favorites:", error)
         } finally {
             setLoading(false)
@@ -85,8 +85,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
             // Update local state
             setFavorites((prev) => [...prev, game])
-        } catch (error: any) {
-            setError("Error adding to favorites: " + error.message)
+        } catch (error: unknown) {
+            setError("Error adding to favorites: " + (error instanceof Error ? error.message : "Unknown error"))
             console.error("Error adding to favorites:", error)
         }
     }
@@ -99,7 +99,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
             // Find the favorite with this game ID
             const favorite = favorites.find((fav) => fav.id === gameId)
-            if (!favorite || !(favorite as any).docId) {
+            if (!favorite || !favorite.docId) {
                 // If not found or no docId, try to find it in Firestore
                 const q = query(collection(db, "favorites"), where("userId", "==", user.uid), where("game.id", "==", gameId))
                 const querySnapshot = await getDocs(q)
@@ -109,13 +109,13 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
                 }
             } else {
                 // If we have the docId, delete directly
-                await deleteDoc(doc(db, "favorites", (favorite as any).docId))
+                await deleteDoc(doc(db, "favorites", favorite.docId))
             }
 
             // Update local state
             setFavorites((prev) => prev.filter((fav) => fav.id !== gameId))
-        } catch (error: any) {
-            setError("Error removing from favorites: " + error.message)
+        } catch (error: unknown) {
+            setError("Error removing from favorites: " + (error instanceof Error ? error.message : "Unknown error"))
             console.error("Error removing from favorites:", error)
         }
     }

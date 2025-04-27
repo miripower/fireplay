@@ -2,6 +2,7 @@ import { searchGames } from "@/lib/api"
 import GameCard from "@/components/game-card"
 import GamesPagination from "@/components/games-pagination"
 import { Search } from "lucide-react"
+import { Game } from "@/types/game.types"
 
 interface SearchPageProps {
     searchParams: {
@@ -22,7 +23,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
             {query ? (
                 <p className="text-gray-400 mb-8">
-                    Se encontraron {gamesData.count} resultados para "{query}"
+                    Se encontraron {gamesData.count} resultados para &quot;{query}&quot;
                 </p>
             ) : (
                 <p className="text-gray-400 mb-8">Introduce un término de búsqueda para encontrar juegos</p>
@@ -35,13 +36,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     </div>
                     <h2 className="text-xl font-bold mb-2">No se encontraron resultados</h2>
                     <p className="text-gray-400">
-                        No hemos encontrado juegos que coincidan con "{query}". Intenta con otros términos.
+                        No hemos encontrado juegos que coincidan con &quot;{query}&quot;. Intenta con otros términos.
                     </p>
                 </div>
             ) : query ? (
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {gamesData.results.map((game) => (
+                        {gamesData.results.map((game: Game) => (
                             <GameCard key={game.id} game={game} />
                         ))}
                     </div>

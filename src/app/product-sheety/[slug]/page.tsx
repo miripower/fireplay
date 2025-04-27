@@ -141,7 +141,7 @@ export default async function ProductSheetyPage({ params }: ProductSheetyPagePro
                     {/* Reviews section */}
                     <div className="border-t border-gray-700 p-6">
                         <h2 className="text-2xl font-bold mb-6">Opiniones de usuarios</h2>
-                        <GameReviews gameId={game.id} gameName={game.name} />
+                        <GameReviews gameName={game.name} />
                     </div>
                 </div>
             </div>

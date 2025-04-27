@@ -72,11 +72,10 @@ const mockReviews: Review[] = [
 ]
 
 interface GameReviewsProps {
-    gameId: number
     gameName: string
 }
 
-export default function GameReviews({ gameId, gameName }: GameReviewsProps) {
+export default function GameReviews({ gameName }: GameReviewsProps) {
     const [reviews, setReviews] = useState<Review[]>(mockReviews)
     const [newReview, setNewReview] = useState({ rating: 0, comment: "" })
     const [showReviewForm, setShowReviewForm] = useState(false)
