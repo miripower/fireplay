@@ -8,14 +8,16 @@ import GameRating from "@/components/game-rating"
 import AddToCartButton from "@/components/add-to-cart-button"
 
 interface GamePageProps {
-    params: {
+    params: Promise<{
         slug: string
-    }
+    }>
 }
 
 export default async function GamePage({ params }: GamePageProps) {
+    const resolvedParams = await params
+
     try {
-        const game = await getGameDetails(params.slug)
+        const game = await getGameDetails(resolvedParams.slug)
         const screenshots = await getGameScreenshots(game.id)
 
         // Calculate fictional price based on rating
