@@ -104,7 +104,7 @@ export default async function GamePage({ params }: GamePageProps) {
                             <div>
                                 <h2 className="text-xl font-bold mb-4">Plataformas</h2>
                                 <div className="bg-gray-800 rounded-lg p-4">
-                                    <GamePlatforms platforms={game.parent_platforms || game.platforms} />
+                                    <GamePlatforms platforms={game.parent_platforms || game.platforms || []} />
                                 </div>
                             </div>
                         </div>
