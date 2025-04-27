@@ -5,15 +5,16 @@ import { Search } from "lucide-react"
 import { Game } from "@/types/game.types"
 
 interface SearchPageProps {
-    searchParams: {
+    searchParams: Promise<{
         query?: string
         page?: string
-    }
+    }>
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-    const query = searchParams.query || ""
-    const page = searchParams.page ? Number.parseInt(searchParams.page) : 1
+    const resolvedSearchParams = await searchParams
+    const query = resolvedSearchParams.query || ""
+    const page = resolvedSearchParams.page ? Number.parseInt(resolvedSearchParams.page) : 1
 
     const gamesData = query ? await searchGames(query, page, 12) : { results: [], count: 0 }
 
