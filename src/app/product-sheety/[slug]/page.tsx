@@ -7,14 +7,16 @@ import AddToCartButton from "@/components/add-to-cart-button"
 import GameReviews from "@/components/game-reviews"
 
 interface ProductSheetyPageProps {
-    params: {
+    params: Promise<{
         slug: string
-    }
+    }>
 }
 
 export default async function ProductSheetyPage({ params }: ProductSheetyPageProps) {
+    const resolvedParams = await params
+
     try {
-        const game = await getGameDetails(params.slug)
+        const game = await getGameDetails(resolvedParams.slug)
 
         // Calculate fictional price based on rating
         const price = (Math.floor(game.rating * 10) + 5).toFixed(2)
@@ -22,7 +24,7 @@ export default async function ProductSheetyPage({ params }: ProductSheetyPagePro
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="mb-6">
-                    <Link href={`/game/${params.slug}`} className="inline-flex items-center text-gray-400 hover:text-white">
+                    <Link href={`/game/${resolvedParams.slug}`} className="inline-flex items-center text-gray-400 hover:text-white">
                         <ArrowLeft size={16} className="mr-2" />
                         Volver a la página del juego
                     </Link>
