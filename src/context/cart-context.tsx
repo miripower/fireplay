@@ -21,17 +21,19 @@ interface CartContextType {
     updateQuantity: (gameId: number, quantity: number) => void
     clearCart: () => void
     getTotal: () => number
+    savePurchase: () => Promise<void>
 }
 
 export const CartContext = createContext<CartContextType>({
     cartItems: [],
     loading: false,
     error: null,
-    addToCart: () => { },
-    removeFromCart: () => { },
-    updateQuantity: () => { },
-    clearCart: () => { },
+    addToCart: () => {},
+    removeFromCart: () => {},
+    updateQuantity: () => {},
+    clearCart: () => {},
     getTotal: () => 0,
+    savePurchase: async () => {},
 })
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -130,6 +132,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
     }
 
+    const savePurchase = async () => {
+        if (!user) return
+    
+        try {
+            const subtotal = getTotal()
+            const tax = subtotal * 0.21
+            const totalWithTax = subtotal + tax
+    
+            await addDoc(collection(db, "purchases"), {
+                userId: user.uid,
+                items: cartItems,
+                subtotal,
+                tax,
+                total: totalWithTax,
+                createdAt: new Date(),
+            })
+            clearCart()
+        } catch (error) {
+            console.error("Error saving purchase:", error)
+            throw error
+        }
+    }
+
     const addToCart = (game: Game, quantity = 1) => {
         setCartItems((prevItems) => {
             // Calculate price based on rating (fictional)
@@ -182,6 +207,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 updateQuantity,
                 clearCart,
                 getTotal,
+                savePurchase,
             }}
         >
             {children}

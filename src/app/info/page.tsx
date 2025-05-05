@@ -30,7 +30,6 @@ export default function InfoPage() {
                         <li>Integrar una API externa (RAWG) para obtener datos de videojuegos</li>
                         <li>Aplicar buenas prácticas de desarrollo y arquitectura</li>
                         <li>Implementar funcionalidades como favoritos, carrito y búsqueda</li>
-                        <li>Desarrollar una Progressive Web App (PWA) con manifest.json y service worker</li>
                     </ul>
                 </div>
             </div>

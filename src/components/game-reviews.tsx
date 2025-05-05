@@ -80,6 +80,7 @@ export default function GameReviews({ gameName }: GameReviewsProps) {
     const [newReview, setNewReview] = useState({ rating: 0, comment: "" })
     const [showReviewForm, setShowReviewForm] = useState(false)
     const { user } = useAuth()
+    const [userLikes, setUserLikes] = useState<Set<string>>(new Set()) // Track user likes by review ID
 
     const handleRatingChange = (rating: number) => {
         setNewReview((prev) => ({ ...prev, rating }))
@@ -113,7 +114,25 @@ export default function GameReviews({ gameName }: GameReviewsProps) {
 
     const handleLike = (reviewId: string) => {
         setReviews((prev) =>
-            prev.map((review) => (review.id === reviewId ? { ...review, likes: review.likes + 1 } : review)),
+            prev.map((review) => {
+                if (review.id === reviewId) {
+                    const hasLiked = userLikes.has(reviewId)
+                    if (hasLiked) {
+                        // If already liked, remove like
+                        setUserLikes((prevLikes) => {
+                            const updatedLikes = new Set(prevLikes)
+                            updatedLikes.delete(reviewId)
+                            return updatedLikes
+                        })
+                        return { ...review, likes: review.likes - 1 }
+                    } else {
+                        // If not liked, add like
+                        setUserLikes((prevLikes) => new Set(prevLikes).add(reviewId))
+                        return { ...review, likes: review.likes + 1 }
+                    }
+                }
+                return review
+            }),
         )
     }
 
@@ -243,7 +262,7 @@ export default function GameReviews({ gameName }: GameReviewsProps) {
 
                         <div className="flex justify-between text-sm text-gray-400">
                             <span>{review.date.toLocaleDateString()}</span>
-                            <button onClick={() => handleLike(review.id)} className="flex items-center gap-1 hover:text-white">
+                            <button onClick={() => handleLike(review.id)} className="flex items-center gap-1 cursor-pointer hover:text-white">
                                 <ThumbsUp size={14} />
                                 <span>{review.likes}</span>
                             </button>

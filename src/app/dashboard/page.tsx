@@ -17,12 +17,21 @@ interface Message {
     createdAt: Date
 }
 
+interface Purchase {
+    id: string
+    items: { id: string; name: string; price: number; quantity: number }[]
+    total: number
+    createdAt: Date
+}
+
 export default function DashboardPage() {
     const { user, loading: authLoading, logout } = useAuth()
     const { favorites } = useFavorites()
     const { cartItems } = useCart()
     const [messages, setMessages] = useState<Message[]>([])
+    const [purchases, setPurchases] = useState<Purchase[]>([])
     const [messagesLoading, setMessagesLoading] = useState(true)
+    const [purchasesLoading, setPurchasesLoading] = useState(true)
     const [activeTab, setActiveTab] = useState("profile")
     const router = useRouter()
     const [isClient, setIsClient] = useState(false)
@@ -35,9 +44,10 @@ export default function DashboardPage() {
             router.push("/login")
         }
 
-        // Load messages if user is authenticated
+        // Load messages and purchases if user is authenticated
         if (user) {
             loadMessages()
+            loadPurchases()
         }
     }, [user, authLoading, router])
 
@@ -63,6 +73,31 @@ export default function DashboardPage() {
             console.error("Error loading messages:", error)
         } finally {
             setMessagesLoading(false)
+        }
+    }
+
+    const loadPurchases = async () => {
+        try {
+            setPurchasesLoading(true)
+            const q = query(collection(db, "purchases"), where("userId", "==", user?.uid))
+            const querySnapshot = await getDocs(q)
+
+            const purchasesData: Purchase[] = []
+            querySnapshot.forEach((doc) => {
+                const data = doc.data()
+                purchasesData.push({
+                    id: doc.id,
+                    items: data.items,
+                    total: data.total,
+                    createdAt: data.createdAt.toDate(),
+                })
+            })
+
+            setPurchases(purchasesData)
+        } catch (error) {
+            console.error("Error loading purchases:", error)
+        } finally {
+            setPurchasesLoading(false)
         }
     }
 
@@ -103,7 +138,7 @@ export default function DashboardPage() {
                         <nav className="space-y-1">
                             <button
                                 onClick={() => setActiveTab("profile")}
-                                className={`w-full flex items-center p-3 rounded-md ${activeTab === "profile" ? "bg-blue-600" : "hover:bg-gray-700"
+                                className={`w-full cursor-pointer flex items-center p-3 rounded-md ${activeTab === "profile" ? "bg-blue-600" : "hover:bg-gray-700"
                                     }`}
                             >
                                 <User size={18} className="mr-3" />
@@ -111,7 +146,7 @@ export default function DashboardPage() {
                             </button>
                             <button
                                 onClick={() => setActiveTab("favorites")}
-                                className={`w-full flex items-center p-3 rounded-md ${activeTab === "favorites" ? "bg-blue-600" : "hover:bg-gray-700"
+                                className={`w-full cursor-pointer flex items-center p-3 rounded-md ${activeTab === "favorites" ? "bg-blue-600" : "hover:bg-gray-700"
                                     }`}
                             >
                                 <Heart size={18} className="mr-3" />
@@ -119,7 +154,7 @@ export default function DashboardPage() {
                             </button>
                             <button
                                 onClick={() => setActiveTab("cart")}
-                                className={`w-full flex items-center p-3 rounded-md ${activeTab === "cart" ? "bg-blue-600" : "hover:bg-gray-700"
+                                className={`w-full cursor-pointer flex items-center p-3 rounded-md ${activeTab === "cart" ? "bg-blue-600" : "hover:bg-gray-700"
                                     }`}
                             >
                                 <ShoppingCart size={18} className="mr-3" />
@@ -127,7 +162,7 @@ export default function DashboardPage() {
                             </button>
                             <button
                                 onClick={() => setActiveTab("messages")}
-                                className={`w-full flex items-center p-3 rounded-md ${activeTab === "messages" ? "bg-blue-600" : "hover:bg-gray-700"
+                                className={`w-full cursor-pointer flex items-center p-3 rounded-md ${activeTab === "messages" ? "bg-blue-600" : "hover:bg-gray-700"
                                     }`}
                             >
                                 <MessageSquare size={18} className="mr-3" />
@@ -135,7 +170,7 @@ export default function DashboardPage() {
                             </button>
                             <button
                                 onClick={() => setActiveTab("history")}
-                                className={`w-full flex items-center p-3 rounded-md ${activeTab === "history" ? "bg-blue-600" : "hover:bg-gray-700"
+                                className={`w-full cursor-pointer flex items-center p-3 rounded-md ${activeTab === "history" ? "bg-blue-600" : "hover:bg-gray-700"
                                     }`}
                             >
                                 <History size={18} className="mr-3" />
@@ -143,7 +178,7 @@ export default function DashboardPage() {
                             </button>
                             <button
                                 onClick={logout}
-                                className="w-full flex items-center p-3 rounded-md text-red-400 hover:bg-gray-700"
+                                className="w-full cursor-pointer flex items-center p-3 rounded-md text-red-400 hover:bg-gray-700"
                             >
                                 <LogOut size={18} className="mr-3" />
                                 Cerrar sesión
@@ -346,13 +381,38 @@ export default function DashboardPage() {
                         <div className="bg-gray-800 rounded-lg p-6">
                             <h2 className="text-xl font-bold mb-6">Historial de compras</h2>
 
-                            <div className="text-center py-8">
-                                <History size={40} className="mx-auto mb-4 text-gray-500" />
-                                <p className="text-gray-400 mb-4">No has realizado ninguna compra</p>
-                                <Link href="/games" className="btn-primary">
-                                    Explorar juegos
-                                </Link>
-                            </div>
+                            {purchasesLoading ? (
+                                <div className="text-center py-8">
+                                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-500" />
+                                    <p>Cargando historial de compras...</p>
+                                </div>
+                            ) : purchases.length === 0 ? (
+                                <div className="text-center py-8">
+                                    <History size={40} className="mx-auto mb-4 text-gray-500" />
+                                    <p className="text-gray-400 mb-4">No has realizado ninguna compra</p>
+                                    <Link href="/games" className="btn-primary">
+                                        Explorar juegos
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {purchases.map((purchase) => (
+                                        <div key={purchase.id} className="bg-gray-700 rounded-lg p-4">
+                                            <div className="flex justify-between mb-2">
+                                                <span className="text-sm text-gray-400">{purchase.createdAt.toLocaleDateString()}</span>
+                                                <span className="font-bold">{purchase.total.toFixed(2)}€</span> {/* Total con impuestos */}
+                                            </div>
+                                            <ul className="text-gray-300 text-sm space-y-1">
+                                                {purchase.items.map((item, index) => (
+                                                    <li key={`${item.id}-${index}`}>
+                                                        {item.quantity} x {item.name} ({item.price.toFixed(2)}€)
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

@@ -6,7 +6,7 @@ import { useCart } from "@/hooks/use-cart"
 import { Minus, Plus, ShoppingCart, Trash2, ArrowRight } from "lucide-react"
 
 export default function CartPage() {
-    const { cartItems, removeFromCart, updateQuantity, getTotal, clearCart } = useCart()
+    const { cartItems, removeFromCart, updateQuantity, getTotal, clearCart, savePurchase } = useCart()
     const [isClient, setIsClient] = useState(false)
 
     useEffect(() => {
@@ -27,9 +27,14 @@ export default function CartPage() {
         removeFromCart(gameId)
     }
 
-    const handleCheckout = () => {
-        alert("¡Gracias por tu compra! Esta funcionalidad estaría conectada a un sistema de pagos real.")
-        clearCart()
+    const handleCheckout = async () => {
+        try {
+            await savePurchase() // Guarda la compra en Firebase
+            alert("¡Gracias por tu compra!")
+        } catch (error) {
+            console.error("Error al finalizar la compra:", error)
+            alert("Hubo un error al procesar tu compra. Por favor, inténtalo de nuevo.")
+        }
     }
 
     return (
@@ -134,7 +139,7 @@ export default function CartPage() {
                                     <span>{getTotal().toFixed(2)}€</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-400">Impuestos</span>
+                                    <span className="text-gray-400">Impuestos (21%)</span>
                                     <span>{(getTotal() * 0.21).toFixed(2)}€</span>
                                 </div>
                                 <div className="border-t border-gray-700 pt-3 flex justify-between font-bold">

@@ -111,27 +111,34 @@ export default function GameCard({ game }: GameCardProps) {
           {/* Price and Add to Cart button */}
           <div className="mt-auto pt-2 flex justify-between items-center">
             <span className="text-lg font-bold text-green-400">{price}€</span>
-            <button
-              onClick={handleAddToCart}
-              disabled={isInCart || addedToCart}
-              className={`px-2 py-1 rounded-sm flex items-center gap-1 text-sm transition-colors ${
-                isInCart || addedToCart
-                  ? "bg-green-600 text-white cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-500 text-white cursor-pointer"
-              }`}
-            >
-              {isInCart || addedToCart ? (
-                <>
-                  <Check size={14} />
-                  Añadido
-                </>
-              ) : (
-                <>
-                  <ShoppingCart size={14} />
-                  Añadir
-                </>
-              )}
-            </button>
+            {user ? (
+              <button
+                onClick={handleAddToCart}
+                disabled={isInCart || addedToCart}
+                className={`px-2 py-1 rounded-sm flex items-center gap-1 text-sm transition-colors ${isInCart || addedToCart
+                    ? "bg-green-600 text-white cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-500 text-white cursor-pointer"
+                  }`}
+              >
+                {isInCart || addedToCart ? (
+                  <>
+                    <Check size={14} />
+                    Añadido
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart size={14} />
+                    Añadir
+                  </>
+                )}
+              </button>
+            ) : (
+              <span className="text-sm text-gray-400">
+                <Link href="/login" className="text-blue-400 hover:text-blue-300">
+                  Inicia sesión para añadir al carrito
+                </Link>
+              </span>
+            )}
           </div>
         </div>
       </div>
