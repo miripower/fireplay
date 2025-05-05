@@ -67,7 +67,7 @@ Sigue estos pasos para instalar y ejecutar el proyecto en tu entorno local:
 - **RAWG API**: API externa para obtener datos de videojuegos.
 - **Tailwind CSS**: Framework de CSS para estilos rápidos y personalizados.
 - **TypeScript**: Superset de JavaScript para tipado estático.
-- **ESLint**: Herramienta para mantener un código limpio y consistente.
+- **Axios**: Cliente HTTP basado en promesas para realizar solicitudes HTTP desde el navegador o Node.js
 
 ---
 
