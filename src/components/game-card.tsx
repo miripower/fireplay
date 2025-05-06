@@ -30,6 +30,7 @@ export default function GameCard({ game }: GameCardProps) {
 
     if (!user) {
       // Redirect to login or show a message
+      alert("Inicia sesión para añadir a favoritos")
       return
     }
 
@@ -81,7 +82,12 @@ export default function GameCard({ game }: GameCardProps) {
           {/* Favorite button */}
           <button
             onClick={handleFavoriteClick}
-            className={`absolute top-2 right-2 p-2 rounded-full ${isFavorite ? "bg-red-500" : "bg-gray-800"} transition-all cursor-pointer`}
+            disabled={!user} // Disable the button if the user is not logged in
+            className={`absolute top-2 right-2 p-2 rounded-full ${
+              isFavorite ? "bg-red-500" : "bg-gray-800"
+            } transition-all cursor-pointer ${
+              !user ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             <Heart size={16} className={isFavorite ? "fill-white text-white" : "text-white"} />
           </button>
@@ -115,10 +121,11 @@ export default function GameCard({ game }: GameCardProps) {
               <button
                 onClick={handleAddToCart}
                 disabled={isInCart || addedToCart}
-                className={`px-2 py-1 rounded-sm flex items-center gap-1 text-sm transition-colors ${isInCart || addedToCart
+                className={`px-2 py-1 rounded-sm flex items-center gap-1 text-sm transition-colors ${
+                  isInCart || addedToCart
                     ? "bg-green-600 text-white cursor-not-allowed"
                     : "bg-blue-600 hover:bg-blue-500 text-white cursor-pointer"
-                  }`}
+                }`}
               >
                 {isInCart || addedToCart ? (
                   <>
@@ -134,9 +141,9 @@ export default function GameCard({ game }: GameCardProps) {
               </button>
             ) : (
               <span className="text-sm text-gray-400">
-                <Link href="/login" className="text-blue-400 hover:text-blue-300">
+                <a href="/login" className="text-blue-400 hover:text-blue-300">
                   Inicia sesión para añadir al carrito
-                </Link>
+                </a>
               </span>
             )}
           </div>
